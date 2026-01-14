@@ -19,3 +19,10 @@ services:
         paths:
           - /n8n
         strip_path: true
+  - name: rabbitmq-manager
+    url: http://rabbitmq.infowise.local:15672
+    routes:
+      - name: rabbitmq-route
+        paths:
+          - /rabbitmq
+        strip_path: false
