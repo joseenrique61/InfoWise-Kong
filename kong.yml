@@ -26,3 +26,10 @@ services:
         paths:
           - /rabbitmq
         strip_path: false
+  - name: news-app
+    url: http://news-app.infowise.local:8080
+    routes:
+      - name: news-app-route
+        paths:
+          - /news-app
+        strip_path: true
