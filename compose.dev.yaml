@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  # 1. KONG (Tu Gateway)
+  kong:
+    image: kong:latest
+    container_name: kong-local
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /usr/local/kong/declarative/kong.yml
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_LISTEN: 0.0.0.0:8000
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+    volumes:
+      - ./kong.yml:/usr/local/kong/declarative/kong.yml
+    ports:
+      - "8000:8000" # Proxy (Entrada pública)
+      - "8001:8001" # Admin API
+      - "8002:8002" # Admin API
+      - "8444:8444" # Admin API
+    networks:
+      infowise-net:
+
+  # 2. N8N (Real)
+  n8n:
+    image: n8nio/n8n
+    container_name: n8n-local
+    environment:
+      - DB_TYPE=sqlite
+      # Estas 3 variables son CRÍTICAS para ver la UI detrás de Kong
+      - N8N_PATH=/n8n/
+      - WEBHOOK_URL=http://localhost:8000/n8n/
+      - N8N_EDITOR_BASE_URL=http://localhost:8000/n8n/
+    networks:
+      infowise-net:
+        aliases:
+          - n8n.infowise.local # <--- ¡Aquí está la magia! Simula el DNS de AWS
+
+  # 3. MOCK SERVICES (Simulan ser tus microservicios para ver si Kong redirige bien)
+  # Usamos una imagen ligera que simplemente devuelve "Hola" y la info de la petición
+  news-mock:
+    image: ealen/echo-server
+    networks:
+      infowise-net:
+        aliases:
+          - news-service.infowise.local # Simula el DNS
+    environment:
+      PORT: 3000
+
+  user-mock:
+    image: ealen/echo-server
+    networks:
+      infowise-net:
+        aliases:
+          - user-service.infowise.local # Simula el DNS
+    environment:
+      PORT: 3000
+
+networks:
+  infowise-net:
