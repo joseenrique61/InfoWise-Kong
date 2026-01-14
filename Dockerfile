@@ -10,4 +10,13 @@ ENV KONG_ADMIN_ERROR_LOG=/dev/stderr
 ENV KONG_PROXY_LISTEN=0.0.0.0:8000
 ENV KONG_ADMIN_LISTEN=0.0.0.0:8001
 
+# Confiamos en todas las IPs (porque Cloudflare tiene muchas y cambian)
+ENV KONG_TRUSTED_IPS=0.0.0.0/0,::/0
+
+# Le decimos a Kong que mire la cabecera real de IP de Cloudflare
+ENV KONG_REAL_IP_HEADER=CF-Connecting-IP
+
+# Le decimos a Kong que confíe en la cabecera de protocolo (HTTP vs HTTPS)
+ENV KONG_PROXY_LISTEN=0.0.0.0:8000 proxy_protocol
+
 USER kong
