@@ -32,4 +32,4 @@ services:
       - name: news-app-route
         paths:
           - /news-app
-        strip_path: true
+        strip_path: false
