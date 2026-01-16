@@ -1,13 +1,13 @@
 _format_version: "2.1"
 services:
   - name: news-service
-    url: http://news-service.infowise.local:3000 # Puerto de tu app
+    url: http://news-service.infowise.local:8080 # Puerto de tu app
     routes:
       - name: news-route
         paths:
           - /news
   - name: user-service
-    url: http://user-service.infowise.local:3000
+    url: http://user-service.infowise.local:8080
     routes:
       - name: user-route
         paths:
